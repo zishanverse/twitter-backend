@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
 
 const TweetsSchema = mongoose.Schema({
-  email: {
-    type: String,
+    tweet_id: {
+    type: Number,
     required: true,
   },
-  password: {
+  tweet: {
     type: String,
     require: true,
   },
-  name: {
-    type: String,
+  user_id: {
+    type: Number,
     require: true,
   },
-  gender: {
+  date_time: {
     type: String,
     require: true,
   },

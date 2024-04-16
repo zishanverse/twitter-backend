@@ -1,19 +1,20 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+//require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const app = express();
-const Tweets = require("./models/tweets")
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const Tweets = require("./models/tweets");
 var admin = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
 const { MongoClient } = require('mongodb');
-const MONGODB_URI = env.MONGODB_URI;
-
+const uri = "mongodb+srv://zishanverse:ff6hkzEuzlGyxblW@cluster0.nucjnys.mongodb.net/twitter?retryWrites=true&w=majority&appName=Cluster0";
 
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-
-const client = new MongoClient(uri);
+const client =  new MongoClient(uri);
 
 async function connect() {
   try {
@@ -31,7 +32,39 @@ connect().then(() => {
 });
 
 const db = client.db('twitter');
-  
+
+// swagger integeration 
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Hello World',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: `https://localhost:${PORT}`,
+      }
+    ],
+    components: {
+      securitySchemes: {
+        jwtToken: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'Authorization',
+          description: 'Enter JWT token in the format "Bearer {token}"',
+        },
+      },
+    },
+    security: [{ jwtToken: [] }],
+  },
+  apis: ['./*.js'], // files containing annotations as above
+};
+
+const openapiSpecification = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+
 
 
 admin.initializeApp({
@@ -60,6 +93,32 @@ const authorization = (request, response, next) => {
   }
 };
 
+
+/**
+ * @swagger
+ * /register/:
+ *   post:
+ *     summary: Create a new user
+ *     description: Create a new user by registering for using website.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: String
+ *               password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successfully created a new User
+ */
 
 
 app.post("/register/", async (request, response) => {
@@ -90,7 +149,40 @@ app.post("/register/", async (request, response) => {
   
 });
 
-
+/**
+ * @swagger
+ * /login/:
+ *   post:
+ *     summary: Loging user 
+ *     description: Loging user with authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: String
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successfully Logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 tweet_id:
+ *                   type: number
+ *                 tweet:
+ *                   type: string
+ *                 user_id:
+ *                   type: number
+ *                 date_time:
+ *                   type: string
+ */
 
 app.post("/login/", async (request, response) => {
   const { email, password } = request.body;
@@ -113,6 +205,25 @@ app.post("/login/", async (request, response) => {
     }
   }
 });
+
+/**
+ * @swagger
+ * /tweets/{id}/:
+ *   get:
+ *     summary: getting perticular tweet
+ *     description: getting perticular tweet with ID params
+ *     security:
+ *       - jwtToken: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully Logged in
+ */
 
 app.get("/tweets/:id/", authorization, async (req, res) => {
   const { id } = req.params;

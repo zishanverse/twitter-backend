@@ -17,7 +17,7 @@ POST http://localhost:3000/login/
 Content-Type: application/json
 
 {
-  "email":"zishan@gmail.com",
+  "email":"zishan1@gmail.com",
   "password":"richard_567"
 }
 
@@ -37,7 +37,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZ
 
 ###
 GET http://localhost:3000/tweets/2/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inppc2hhbkBnbWFpbC5jb20iLCJpYXQiOjE3MTMwMzAyNDh9.gCXf7V_A6zbgqhhmQwDUfrL6OeheBOeULKXdnMrGr6c 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inppc2hhbjFAZ21haWwuY29tIiwiaWF0IjoxNzEzMjY5NzU3fQ.MvlWDGdPHckT9Lu5IdYym5wX395RY9kREu9SwvQsKF8 
 
 
 ###
